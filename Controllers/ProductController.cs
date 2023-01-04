@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebShopAPI.Extensions;
-using WebShopAPI.Interfaces;
-using WebShopAPI.Models;
+using Shared;
+
 
 namespace WebShopAPI.Controllers
 {
@@ -16,7 +15,7 @@ namespace WebShopAPI.Controllers
             _unitOfWork = unitOfWork;
         }
 
-
+        /*
         [HttpPost("{productId}")]
         public async Task<ActionResult> AddProductToCart(int productId)
         {
@@ -34,6 +33,6 @@ namespace WebShopAPI.Controllers
             if (await _unitOfWork.Complete()) return Ok();
 
             return BadRequest("Failed to add product to cart");
-        }
+        }*/
     }
 }

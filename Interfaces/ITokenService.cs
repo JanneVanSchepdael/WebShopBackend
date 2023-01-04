@@ -1,4 +1,4 @@
-﻿using WebShopAPI.Models;
+﻿using Domain;
 
 namespace WebShopAPI.Interfaces
 {

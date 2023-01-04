@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using Domain;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using WebShopAPI.Interfaces;
-using WebShopAPI.Models;
+
 
 namespace WebShopAPI.Controllers
 {

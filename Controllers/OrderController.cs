@@ -1,8 +1,5 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using WebShopAPI.Interfaces;
-using WebShopAPI.Models;
+﻿using Shared;
+
 
 namespace WebShopAPI.Controllers
 {

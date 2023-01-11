@@ -15,7 +15,12 @@ public class ProductRepository : IProductRepository
         _mapper = mapper;
     }
 
-    public Task<ProductResponse.Detail> GetProductById(ProductRequest.Detail request)
+    public Task<ProductResponse.Detail> GetProductDetailAsync(ProductRequest.Detail request)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ProductResponse.Index> GetProductsAsync(ProductRequest.Index request)
     {
         throw new NotImplementedException();
     }

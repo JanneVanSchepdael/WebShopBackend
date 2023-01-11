@@ -16,7 +16,7 @@ public abstract class ProductResponse
 
     public class Detail
     {
-
+        public ProductDto.Detail Product { get; set; }
     }
 
     public class Create

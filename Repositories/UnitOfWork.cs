@@ -6,6 +6,9 @@ using Shared.Order;
 using Shared.Cart;
 using Repositories.Repositories;
 using Shared;
+using Domain;
+using Microsoft.AspNetCore.Identity;
+using Shared.Token;
 
 namespace Repositories;
 
@@ -13,7 +16,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
-
+    
     //Repositories
     public IUserRepository UserRepository => new UserRepository(_context, _mapper);
     public IProductRepository ProductRepository => new ProductRepository(_context, _mapper);

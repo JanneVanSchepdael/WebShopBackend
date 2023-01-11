@@ -19,6 +19,11 @@ namespace Persistence
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<Cart>()
+                .HasOne(x => x.User)
+                .WithOne(y => y.Cart)
+                .HasForeignKey<Cart>(c => c.UserId);
         }
     }
 }

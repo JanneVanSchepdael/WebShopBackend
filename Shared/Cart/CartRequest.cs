@@ -16,7 +16,7 @@ public abstract class CartRequest
 
     public class Detail
     {
-
+        public string UserId { get; set; }
     }
 
     public class Create

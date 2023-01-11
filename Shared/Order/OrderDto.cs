@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Shared.Product;
 
 namespace Shared.Order
 {
@@ -6,12 +7,15 @@ namespace Shared.Order
     {
         public class Index
         {
-
+            public int Id { get; set; }
+            public DateTime OrderDate { get; set; }
         }
 
         public class Detail
         {
-
+            public int Id { get; set; }
+            public IEnumerable<ProductDto.Index> Products { get; set; }
+            public DateTime OrderDate { get; set; }
         }
 
         public class Create

@@ -11,11 +11,11 @@ public abstract class OrderRequest
 {
     public class Index
     {
-
     }
 
     public class Detail
     {
+        public string UserId { get; set; }
 
     }
 

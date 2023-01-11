@@ -1,5 +1,9 @@
-﻿using Shared;
-
+﻿using Microsoft.AspNetCore.Mvc;
+using Repositories;
+using Shared;
+using Shared.Cart;
+using Shared.Order;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace WebShopAPI.Controllers
 {
@@ -10,6 +14,20 @@ namespace WebShopAPI.Controllers
         public OrderController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+        }
+
+        [SwaggerOperation("Creates a new order.")]
+        [HttpPost]
+        public async Task<OrderResponse.Create> Create([FromBody] OrderRequest.Create request)
+        {
+            return await _unitOfWork.OrderRepository.AddOrderAsync(request);
+        }
+
+        [SwaggerOperation("Returns all orders of a specific user.")]
+        [HttpGet("{userId}")]
+        public async Task<OrderResponse.Detail> GetDetail([FromRoute] OrderRequest.Detail request)
+        {
+            return await _unitOfWork.OrderRepository.GetOrdersByUserAsync(request);
         }
     }
 }

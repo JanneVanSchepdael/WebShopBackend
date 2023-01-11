@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Shared.Product;
 
 namespace Shared.Cart
 {
@@ -11,7 +12,9 @@ namespace Shared.Cart
 
         public class Detail
         {
-
+            public int Id { get; set; }
+            public IEnumerable<ProductDto.Index> Products { get; set; }
+            public decimal TotalPrice { get; set; }
         }
 
         public class Create

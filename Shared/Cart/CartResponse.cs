@@ -16,7 +16,7 @@ public abstract class CartResponse
 
     public class Detail
     {
-
+        public CartDto.Detail Cart { get; set; }
     }
 
     public class Create

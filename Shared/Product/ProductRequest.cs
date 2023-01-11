@@ -16,6 +16,7 @@ public abstract class ProductRequest
 
     public class Detail
     {
+        public int Id { get; set; }
 
     }
 

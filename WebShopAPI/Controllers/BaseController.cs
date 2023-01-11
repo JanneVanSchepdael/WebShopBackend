@@ -4,7 +4,7 @@ namespace WebShopAPI.Controllers
 {
     //[ServiceFilter(typeof(LogUserActivity))]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]s")]
     public class BaseController : ControllerBase
     {
 

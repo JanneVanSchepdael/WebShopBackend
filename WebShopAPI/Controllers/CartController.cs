@@ -24,15 +24,8 @@ namespace WebShopAPI.Controllers
             return await _unitOfWork.CartRepository.GetCartDetailAsync(request);
         }
 
-        [SwaggerOperation("Creates a new cart.")]
-        [HttpPost]
-        public async Task<CartResponse.Create> Create([FromBody] CartRequest.Create request)
-        {
-            return await _unitOfWork.CartRepository.AddCartAsync(request);
-        }
-
         [SwaggerOperation("Edits an existing cart.")]
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<CartResponse.Edit> Edit([FromBody] CartRequest.Edit request)
         {
             return await _unitOfWork.CartRepository.EditCartAsync(request);

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Shared.OrderItem;
 using Shared.Product;
 
 namespace Shared.Order
@@ -9,39 +10,22 @@ namespace Shared.Order
         {
             public int Id { get; set; }
             public DateTime OrderDate { get; set; }
+            public int AmountOfProducts { get; set; }
+            public decimal TotalPrice { get; set; }
         }
 
         public class Detail
         {
             public int Id { get; set; }
-            public IEnumerable<ProductDto.Index> Products { get; set; }
+            public IEnumerable<OrderItemDto.Index> Products { get; set; }
             public DateTime OrderDate { get; set; }
+            public decimal TotalPrice { get; set; }
         }
 
         public class Create
         {
-            //public int Id { get; set; }
-
-            public class Validator : AbstractValidator<Create>
-            {
-                public Validator()
-                {
-                    //RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
-                }
-            }
-        }
-
-        public class Edit
-        {
-            // Props
-
-            public class Validator : AbstractValidator<Edit>
-            {
-                public Validator()
-                {
-                    //RuleFor
-                }
-            }
+            public string UserId { get; set; }
+            public List<OrderItemDto.Index> Items { get; set; } = new();
         }
     }
 }

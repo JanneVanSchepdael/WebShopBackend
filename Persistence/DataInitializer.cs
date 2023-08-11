@@ -12,27 +12,29 @@ public static class DataInitializer
 {
     public async static Task InitializeData(DataContext context, UserManager<AppUser> userManager)
     {
-        // Always delete database first to start with fresh data
-        await context.Database.EnsureDeletedAsync();
+        // Delete database first to start with fresh data
+        //await context.Database.EnsureDeletedAsync();
 
         if(await context.Database.EnsureCreatedAsync())
         {
             // Add Products
             var products = InitProducts();
             await context.Products.AddRangeAsync(products);
-            await context.SaveChangesAsync();
+
+            // Add OrderItems
+            var items = InitOrderItems(products);
+            await context.OrderItems.AddRangeAsync(items);
 
             // Add Carts, and add products to some carts
             var carts = InitCarts();
-            carts[0].AddProduct(products[0]);
-            carts[0].AddProduct(products[1]);
-            carts[0].AddProduct(products[2]);
-            carts[5].AddProduct(products[6]);
-
+            carts[0].AddItem(items[0]);
+            carts[0].AddItem(items[1]);
+            carts[0].AddItem(items[2]);
+            carts[1].AddItem(items[6]);
+            carts[2].AddItem(items[8]);
             await context.Carts.AddRangeAsync(carts);
-            await context.SaveChangesAsync();
 
-            // Add Users, and add carts to some users
+            // Add Users, and add carts to some users (with products in it)
             var users = InitUsers();
             users[0].Cart = carts[0];
             users[1].Cart = carts[1];
@@ -43,25 +45,54 @@ public static class DataInitializer
 
             // Add Orders, and add user + products of carts to it
             var orders = InitOrders(users, carts);
+            orders[0].AddItem(items[0]);
+            orders[0].AddItem(items[1]);
+            orders[0].AddItem(items[2]);
+            orders[1].AddItem(items[6]);
+            orders[2].AddItem(items[8]);
             await context.Orders.AddRangeAsync(orders);
             await context.SaveChangesAsync();
         }
     }
 
+    
+
     private static List<Product> InitProducts()
     {
         return new()
         {
-            new Product("Product One", 5.50m, "", true, "This is the description", 5, ProductType.Hoodie),
-            new Product("Product Two", 100m, "", true, "This is the description", 1, ProductType.Shirt),
-            new Product("Product Three", 50m, "", true, "This is the descriptione", 2, ProductType.Jacket),
-            new Product("Product Four", 9.50m, "", true, "This is the description", 3, ProductType.Hoodie),
-            new Product("Product Five", 19.95m, "", true, "This is the description", 0, ProductType.Hoodie),
-            new Product("Product Six", 16.45m, "", true, "This is the description", 0, ProductType.Hoodie),
-            new Product("Product Seven", 10m, "", true, "This is the description", 1, ProductType.Hoodie),
-            new Product("Product Eight", 30m, "", true, "This is the description", 2, ProductType.Hoodie),
-            new Product("Product Nine", 40m, "", true, "This is the description", 3, ProductType.Hoodie),
-            new Product("Product Ten", 60m, "", true, "This is the description", 0, ProductType.Hoodie),
+            new Product("Product One", 5.50m, "", true, "This is the description", ProductType.Hoodie, DateTime.Today.AddDays(-7)),
+            new Product("Product Two", 100m, "", true, "This is the description", ProductType.Shirt, DateTime.Today.AddDays(-10)),
+            new Product("Product Three", 50m, "", true, "This is the descriptione", ProductType.Jacket, DateTime.Today.AddDays(-50)),
+            new Product("Product Four", 9.50m, "", true, "This is the description", ProductType.Hoodie, DateTime.Today.AddDays(-100)),
+            new Product("Product Five", 19.95m, "", true, "This is the description", ProductType.Hoodie, DateTime.Today.AddDays(-1)),
+            new Product("Product Six", 16.45m, "", true, "This is the description", ProductType.Hoodie, DateTime.Today.AddDays(-8)),
+            new Product("Product Seven", 10m, "", true, "This is the description", ProductType.Hoodie, DateTime.Today.AddDays(-30)),
+            new Product("Product Eight", 30m, "", true, "This is the description", ProductType.Hoodie, DateTime.Today.AddDays(-35)),
+            new Product("Product Nine", 40m, "", true, "This is the description", ProductType.Hoodie, DateTime.Today.AddDays(-7)),
+            new Product("Product Ten", 60m, "", true, "This is the description", ProductType.Hoodie, DateTime.Today.AddDays(-7)),
+            new Product("Product Eleven", 70m, "", true, "This is the description", ProductType.Hoodie, DateTime.Today.AddDays(-7)),
+            new Product("Product Twelve", 80m, "", true, "This is the description", ProductType.Hoodie, DateTime.Today.AddDays(-7)),
+            new Product("Product Thirteen", 40m, "", true, "This is the description", ProductType.Shirt, DateTime.Today.AddDays(-180)),
+            new Product("Product Fourteen", 50m, "", true, "This is the description", ProductType.Shirt, DateTime.Today.AddDays(-180)),
+            new Product("Product Fifteen", 10m, "", true, "This is the description", ProductType.Jacket, DateTime.Today.AddDays(-2)),
+        };
+    }
+
+    private static List<OrderItem> InitOrderItems(List<Product> products)
+    {
+        return new()
+        {
+            new OrderItem(products[0], 2),
+            new OrderItem(products[1], 1),
+            new OrderItem(products[2], 3),
+            new OrderItem(products[3], 1),
+            new OrderItem(products[4], 2),
+            new OrderItem(products[5], 1),
+            new OrderItem(products[6], 3),
+            new OrderItem(products[7], 1),
+            new OrderItem(products[8], 2),
+            new OrderItem(products[9], 1),
         };
     }
 
@@ -83,11 +114,11 @@ public static class DataInitializer
     {
         return new()
         {
-            new Order(users[0], carts[0].Products),
-            new Order(users[0], carts[1].Products),
-            new Order(users[0], carts[2].Products),
-            new Order(users[1], carts[0].Products),
-            new Order(users[2], carts[5].Products),
+            new Order(users[0], carts[0].Items),
+            new Order(users[0], carts[1].Items),
+            new Order(users[0], carts[2].Items),
+            new Order(users[1], carts[0].Items),
+            new Order(users[2], carts[5].Items),
         };
     }
 

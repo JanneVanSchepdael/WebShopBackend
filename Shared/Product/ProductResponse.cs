@@ -11,7 +11,8 @@ public abstract class ProductResponse
 {
     public class Index
     {
-
+        public List<ProductDto.Index> Products { get; set; }
+        public int TotalAmount { get; set; }
     }
 
     public class Detail

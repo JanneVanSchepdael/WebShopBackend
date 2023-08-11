@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
-using Domain;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using Shared.Token;
 using Shared.User;
+using Domain;
+
 
 namespace Repositories.Repositories;
 
@@ -22,10 +20,32 @@ public class UserRepository : IUserRepository
         _mapper = mapper;
     }
 
+    private IQueryable<AppUser> GetUserById(string id) => _context.Users
+       .AsNoTracking()
+       .Where(a => a.Id == id);
+
     public async Task<UserResponse.Edit> EditAsync(UserRequest.Edit request)
     {
-        //_context.Entry(user).State = EntityState.Modified;
-        throw new NotImplementedException();
+        UserResponse.Edit response = new();
+        AppUser user = await GetUserById(request.User.Id).SingleOrDefaultAsync();
+
+        if (user != null)
+        {
+            _mapper.Map(request.User, user);
+
+            _context.Entry(user).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            response.User = new()
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName= user.LastName,
+            };
+
+        }
+
+        return response;
     }
 
     public async Task<UserResponse.Detail> GetUserDetailAsync(UserRequest.Detail request)

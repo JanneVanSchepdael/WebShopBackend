@@ -21,28 +21,64 @@ public class CartRepository : ICartRepository
     }
 
     private IQueryable<Cart> GetCartByUserId(string id) => _carts
-        .AsNoTracking()
-        .Where(a => a.UserId == id).Include(a => a.Products);
+        .Where(a => a.UserId == id).Include(a => a.Items);
 
     public async Task<CartResponse.Detail> GetCartDetailAsync(CartRequest.Detail request)
     {
         CartResponse.Detail response = new()
         {
             Cart = await GetCartByUserId(request.UserId)
-            .ProjectTo<CartDto.Detail>(_mapper.ConfigurationProvider)
+            .ProjectTo<CartDto>(_mapper.ConfigurationProvider)
             .SingleOrDefaultAsync()
         };
 
         return response;
     }
-
-    public Task<CartResponse.Create> AddCartAsync(CartRequest.Create request)
+    
+    public async Task<CartResponse.Edit> EditCartAsync(CartRequest.Edit request)
     {
-        throw new NotImplementedException();
-    }
+        CartResponse.Edit response = new();
 
-    public Task<CartResponse.Edit> EditCartAsync(CartRequest.Edit request)
-    {
-        throw new NotImplementedException();
+        Cart cart = await GetCartByUserId(request.Cart.UserId)
+            .SingleOrDefaultAsync();
+
+        if (cart != null)
+        {
+            // Remove products that aren't in the updated cart (both collection & context)
+            var updatedItemIds = request.Cart.Items.Select(a => a.Id).ToList();
+            var itemsToRemove = cart.Items.Where(a => !updatedItemIds.Contains(a.Id)).ToList();
+
+            foreach (var item in itemsToRemove)
+            {
+                cart.Items.Remove(item);
+                _context.OrderItems.Remove(item);
+            }
+
+            // Manually loop through the products in the request and update the corresponding products in the cart
+            foreach (var updatedItem in request.Cart.Items)
+            {
+                var existingItem = cart.Items.FirstOrDefault(p => p.Id == updatedItem.Id);
+
+                if (existingItem != null)
+                    _mapper.Map(updatedItem, existingItem);
+                else
+                {
+                    var product = await _context.Products.FindAsync(updatedItem.ProductId);
+
+                    if(product != null)
+                    {
+                        var item = _mapper.Map<OrderItem>(updatedItem);
+                        item.Product = product;
+                        cart.Items.Add(item);
+
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            response.Cart = _mapper.Map<CartDto>(cart);
+        }
+
+        return response;
     }
 }

@@ -8,20 +8,21 @@ public class Product
     public string Image { get; set; }
     public bool IsAvailable { get; set; }
     public string Description { get; set; }
-    public int Quantity { get; set; } = 0;
+    public DateTime ReleaseDate { get; set; }
+
     public ProductType ProductType { get; set; }
 
     public Product() { }
 
-    public Product(string name, decimal price, string image, bool isAvailable, string description, int quantity, ProductType productType)
+    public Product(string name, decimal price, string image, bool isAvailable, string description, ProductType productType, DateTime releaseDate)
     {
         Name = name;
         Price = price;
         Image = image;
         IsAvailable = isAvailable;
         Description = description;
-        Quantity = quantity;
         ProductType = productType;
+        ReleaseDate = releaseDate;
     }
 }
 

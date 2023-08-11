@@ -1,46 +1,11 @@
 ﻿using FluentValidation;
+using Shared.OrderItem;
 using Shared.Product;
 
-namespace Shared.Cart
+namespace Shared.Cart;
+
+public class CartDto
 {
-    public abstract class CartDto
-    {
-        public class Index
-        {
-
-        }
-
-        public class Detail
-        {
-            public int Id { get; set; }
-            public IEnumerable<ProductDto.Index> Products { get; set; }
-            public decimal TotalPrice { get; set; }
-        }
-
-        public class Create
-        {
-            //public int Id { get; set; }
-
-            public class Validator : AbstractValidator<Create>
-            {
-                public Validator()
-                {
-                    //RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
-                }
-            }
-        }
-
-        public class Edit
-        {
-            // Props
-
-            public class Validator : AbstractValidator<Edit>
-            {
-                public Validator()
-                {
-                    //RuleFor
-                }
-            }
-        }
-    }
+    public string UserId { get; set; }
+    public IEnumerable<OrderItemDto.Index> Items { get; set; }
 }

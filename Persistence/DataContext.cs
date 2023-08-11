@@ -10,6 +10,7 @@ namespace Persistence
     {
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Order> Orders { get; set; }
 
         public DataContext(DbContextOptions options) : base(options)
@@ -24,6 +25,10 @@ namespace Persistence
                 .HasOne(x => x.User)
                 .WithOne(y => y.Cart)
                 .HasForeignKey<Cart>(c => c.UserId);
+
+            builder.Entity<Product>()
+                .Property(p => p.Price)
+                .HasColumnType("decimal(18,2)");
         }
     }
 }

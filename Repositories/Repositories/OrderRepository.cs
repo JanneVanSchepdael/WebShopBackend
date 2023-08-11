@@ -3,8 +3,8 @@ using AutoMapper.QueryableExtensions;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using Shared.Cart;
 using Shared.Order;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Repositories.Repositories;
 
@@ -24,22 +24,37 @@ public class OrderRepository : IOrderRepository
     private IQueryable<Order> GetOrdersByUserId(string id) => _orders
        .AsNoTracking()
        .OrderByDescending(m => m.OrderDate)
-       .Where(o => o.User.Id == id).Include(a => a.Products);
+       .Where(o => o.User.Id == id).Include(a => a.Items);
 
-    public async Task<OrderResponse.Detail> GetOrdersByUserAsync(OrderRequest.Detail request)
+    private IQueryable<AppUser> GetUserById(string id) => _context.Users
+       .AsNoTracking()
+       .Where(a => a.Id == id);
+
+    public async Task<OrderResponse.Index> GetOrdersByUserAsync(OrderRequest.Index request)
     {
-        OrderResponse.Detail response = new()
-        {
-            Orders = await GetOrdersByUserId(request.UserId)
-                .ProjectTo<OrderDto.Detail>(_mapper.ConfigurationProvider)
-                .ToListAsync()
-        };
+        OrderResponse.Index response = new();
+
+
+        response.Orders = await GetOrdersByUserId(request.UserId)
+                .ProjectTo<OrderDto.Index>(_mapper.ConfigurationProvider)
+                .ToListAsync();
 
         return response;
     }
 
-    public Task<OrderResponse.Create> AddOrderAsync(OrderRequest.Create request)
+    public async Task<OrderResponse.Create> AddOrderAsync(OrderRequest.Create request)
     {
-        throw new NotImplementedException();
+        OrderResponse.Create response = new();
+
+        AppUser user = await GetUserById(request.Order.UserId).SingleOrDefaultAsync();
+        var items = _mapper.Map<List<OrderItem>>(request.Order.Items);
+
+        var order = new Order(user, items);
+
+        _orders.Add(order);
+        await _context.SaveChangesAsync();
+
+        response.Id = order.Id;
+        return response;
     }
 }

@@ -11,6 +11,12 @@ public abstract class ProductRequest
 {
     public class Index
     {
+        public string SearchTerm { get; set; }
+        public int Amount { get; set; } = 9;
+        public int Page { get; set; }
+        public int MinDaysOld { get; set; } = -1;
+        public int MaxDaysOld { get; set; } = 365;
+        public string OrderBy { get; set; }
 
     }
 

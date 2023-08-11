@@ -25,7 +25,7 @@ namespace WebShopAPI.Controllers
 
         [SwaggerOperation("Returns all orders of a specific user.")]
         [HttpGet("{userId}")]
-        public async Task<OrderResponse.Detail> GetDetail([FromRoute] OrderRequest.Detail request)
+        public async Task<OrderResponse.Index> GetDetail([FromRoute] OrderRequest.Index request)
         {
             return await _unitOfWork.OrderRepository.GetOrdersByUserAsync(request);
         }

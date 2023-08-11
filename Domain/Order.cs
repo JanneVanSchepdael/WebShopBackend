@@ -4,15 +4,20 @@ public class Order
 {
     public int Id { get; set; }
     public AppUser User { get; set; }
-    public List<Product> Products { get; set; } = new();
+    public List<OrderItem> Items { get; set; } = new();
     //public string Address { get; set; }
     public DateTime OrderDate { get; set; }
 
     public Order() { }
-    public Order(AppUser user, List<Product> products)
+    public Order(AppUser user, List<OrderItem> items)
     {
         User = user;
-        Products = products;
+        Items = items;
         OrderDate = DateTime.Now;
+    }
+
+    public void AddItem(OrderItem item)
+    {
+        Items.Add(item);
     }
 }

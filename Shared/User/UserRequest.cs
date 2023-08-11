@@ -30,6 +30,6 @@ public abstract class UserRequest
 
     public class Edit
     {
-        
+       public UserDto.Edit User { get; set; }
     }
 }

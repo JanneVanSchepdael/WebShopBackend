@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shared.Product;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,8 @@ public abstract class OrderRequest
 {
     public class Index
     {
+        public string UserId { get; set; }
+
     }
 
     public class Detail
@@ -21,17 +24,6 @@ public abstract class OrderRequest
 
     public class Create
     {
-        
+        public OrderDto.Create Order { get; set; }
     }
-
-    public class Edit
-    {
-
-    }
-
-    public class Delete
-    {
-
-    }
-
 }

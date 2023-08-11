@@ -1,25 +1,28 @@
-﻿namespace Domain;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Domain;
 
 public class Cart
 {
     public int Id { get; set; }
-    public AppUser User { get; set; }
     public string UserId { get; set; }
-    public List<Product> Products { get; set; }
+    public AppUser User { get; set; }
+    public List<OrderItem> Items { get; set; }
     public DateTime DateCreated { get; set; }
 
     public Cart() {
-        Products = new();
+        Items = new();
         DateCreated = DateTime.Now;
     }
 
-    public void AddProduct(Product product)
+    public void AddItem(OrderItem item)
     {
-        Products.Add(product);
+        Items.Add(item);
     }
 
-    public void RemoveProduct(Product product)
+    public void RemoveItem(OrderItem item)
     {
-        Products.Remove(product);
+        Items.Remove(item);
     }
 }

@@ -2,6 +2,6 @@
 
 public interface IOrderRepository
 {
-    Task<OrderResponse.Detail> GetOrdersByUserAsync(OrderRequest.Detail request);
+    Task<OrderResponse.Index> GetOrdersByUserAsync(OrderRequest.Index request);
     Task<OrderResponse.Create> AddOrderAsync(OrderRequest.Create request);
 }

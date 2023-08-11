@@ -45,6 +45,7 @@ namespace WebShopAPI.Controllers
 
             return new UserResponse.Register
             {
+                Id = user.Id.ToString(),
                 Email = user.Email,
                 Token = await _tokenRepository.CreateToken(
                         new TokenRequest {Id = user.Id.ToString(), Email = user.Email}
@@ -68,9 +69,19 @@ namespace WebShopAPI.Controllers
 
             return new UserResponse.Login
             {
+                Id = user.Id.ToString(),
                 Email = user.Email,
-                Token = await _tokenRepository.CreateToken( new TokenRequest {Id = user.Id.ToString(), Email = user.Email })
-        };
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Token = await _tokenRepository.CreateToken(new TokenRequest { Id = user.Id.ToString(), Email = user.Email })
+            };
+        }
+
+        [SwaggerOperation("Edits an existing user.")]
+        [HttpPut]
+        public async Task<UserResponse.Edit> Edit([FromBody] UserRequest.Edit request)
+        {
+            return await _unitOfWork.UserRepository.EditAsync(request);
         }
 
         private async Task<bool> UserExists(string username)

@@ -9,29 +9,13 @@ namespace Shared.Cart;
 // Abstract so there is never an object made of this class
 public abstract class CartRequest
 {
-    public class Index
-    {
-
-    }
-
     public class Detail
     {
         public string UserId { get; set; }
     }
 
-    public class Create
-    {
-        
-    }
-
     public class Edit
     {
-
+        public CartDto Cart { get; set; }
     }
-
-    public class Delete
-    {
-
-    }
-
 }

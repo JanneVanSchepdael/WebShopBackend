@@ -11,11 +11,11 @@ public abstract class CartResponse
 {
     public class Detail
     {
-        public CartDto Cart { get; set; }
+        public CartDto.Detail Cart { get; set; }
     }
 
     public class Edit
     {
-        public CartDto Cart { get; set; }
+        public CartDto.Edit Cart { get; set; }
     }
 }

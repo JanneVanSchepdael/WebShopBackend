@@ -28,11 +28,46 @@ public class CartRepository : ICartRepository
         CartResponse.Detail response = new()
         {
             Cart = await GetCartByUserId(request.UserId)
-            .ProjectTo<CartDto>(_mapper.ConfigurationProvider)
+            .ProjectTo<CartDto.Detail>(_mapper.ConfigurationProvider)
             .SingleOrDefaultAsync()
         };
 
         return response;
+    }
+
+    public async Task<CartResponse.Edit> AddToCartAsync(CartRequest.Add request)
+    {
+        CartResponse.Edit response = new();
+
+        Cart cart = await GetCartByUserId(request.UserId)
+            .SingleOrDefaultAsync();
+
+        if (cart != null)
+        {
+            var item = cart.Items.FirstOrDefault(a => a.ProductId == request.ProductId);
+
+            if (item != null)
+                item.Quantity += request.Quantity;
+            else
+            {
+                var product = await _context.Products.FindAsync(request.ProductId);
+
+                if (product != null)
+                {
+                    var newItem = new OrderItem(product, request.Quantity);
+                    cart.Items.Add(newItem);
+                }
+            }
+        }
+
+        await _context.SaveChangesAsync();
+
+        response.Cart = await GetCartByUserId(request.UserId)
+            .ProjectTo<CartDto.Edit>(_mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync();
+
+        return response;
+
     }
     
     public async Task<CartResponse.Edit> EditCartAsync(CartRequest.Edit request)
@@ -68,7 +103,7 @@ public class CartRepository : ICartRepository
                     if(product != null)
                     {
                         var item = _mapper.Map<OrderItem>(updatedItem);
-                        item.Product = product;
+                        item.ProductId = product.Id;
                         cart.Items.Add(item);
 
                     }
@@ -76,7 +111,7 @@ public class CartRepository : ICartRepository
             }
 
             await _context.SaveChangesAsync();
-            response.Cart = _mapper.Map<CartDto>(cart);
+            response.Cart = _mapper.Map<CartDto.Edit>(cart);
         }
 
         return response;

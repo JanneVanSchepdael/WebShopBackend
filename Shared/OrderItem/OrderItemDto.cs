@@ -16,22 +16,11 @@ namespace Shared.OrderItem
             public int Quantity { get; set; }
         }
 
-        public class Create
-        {
-            public int ProductId { get; set; }
-            public int Quantity { get; set; }
-        }
-
-        public class Edit
+        public class Detail
         {
             public int Id { get; set; }
-            public int ProductId { get; set; }
+            public ProductDto.Index Product { get; set; }
             public int Quantity { get; set; }
         }
-
-        public class Delete
-        {
-            public int Id { get; set; }
-        }   
     }
 }

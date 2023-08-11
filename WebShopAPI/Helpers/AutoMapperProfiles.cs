@@ -20,7 +20,9 @@ namespace API.Helpers
             CreateMap<UserDto.Edit, AppUser>();
 
             // Cart
-            CreateMap<Cart, CartDto>()
+            CreateMap<Cart, CartDto.Edit>()
+                .ReverseMap();
+            CreateMap<Cart, CartDto.Detail>()
                 .ReverseMap();
 
 
@@ -32,8 +34,10 @@ namespace API.Helpers
             CreateMap<ProductDto.Index, Product>();
 
             // OrderItem
-            CreateMap<OrderItem, OrderItemDto.Index>()
-                .ForMember(x => x.ProductId, y => y.MapFrom(src => src.Product.Id))
+            CreateMap<OrderItem, OrderItemDto.Index>();
+            CreateMap<OrderItemDto.Index, OrderItem>()
+                .ForMember(x => x.Product, y => y.Ignore());
+            CreateMap<OrderItem, OrderItemDto.Detail>()
                 .ReverseMap();
 
             // Order

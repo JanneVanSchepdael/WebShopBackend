@@ -13,7 +13,7 @@ public static class DataInitializer
     public async static Task InitializeData(DataContext context, UserManager<AppUser> userManager)
     {
         // Delete database first to start with fresh data
-        await context.Database.EnsureDeletedAsync();
+        //await context.Database.EnsureDeletedAsync();
 
         if(await context.Database.EnsureCreatedAsync())
         {

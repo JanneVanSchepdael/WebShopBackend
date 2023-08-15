@@ -19,6 +19,7 @@ public class AppUser : IdentityUser
         FirstName = firstName; 
         LastName = lastName;
         Cart = new();
+
     }
 
     public void AddOrder(Order order)

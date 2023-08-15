@@ -22,7 +22,7 @@ public class Product
         IsAvailable = isAvailable;
         Description = description;
         ProductType = productType;
-        ReleaseDate = releaseDate;
+        ReleaseDate = releaseDate.ToUniversalTime();
     }
 }
 

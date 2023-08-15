@@ -13,7 +13,7 @@ public class Cart
 
     public Cart() {
         Items = new();
-        DateCreated = DateTime.Now;
+        DateCreated = DateTime.UtcNow;
     }
 
     public void AddItem(OrderItem item)

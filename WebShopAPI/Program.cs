@@ -6,6 +6,7 @@ using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Persistence;
@@ -19,8 +20,9 @@ using Shared.Token;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
+
+// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddCors();
 
@@ -37,8 +39,8 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Web Shop API", Version = "v1" });
 });
 
-builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext"))
-                    .EnableSensitiveDataLogging(builder.Configuration.GetValue<bool>("Logging:EnableSqlParameterLogging")));
+builder.Services.AddDbContext<DataContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("OnlineContext"))
+    .EnableSensitiveDataLogging(builder.Configuration.GetValue<bool>("Logging:EnableSqlParameterLogging")));
 
 // Add Identity
 builder.Services.AddIdentityServices(builder.Configuration);
@@ -76,7 +78,7 @@ if (app.Environment.IsDevelopment())
     }
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins(

@@ -13,7 +13,7 @@ public class Order
     {
         User = user;
         Items = items;
-        OrderDate = DateTime.Now;
+        OrderDate = DateTime.UtcNow;
     }
 
     public void AddItem(OrderItem item)

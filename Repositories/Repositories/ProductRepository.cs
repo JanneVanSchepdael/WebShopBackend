@@ -46,8 +46,8 @@ public class ProductRepository : IProductRepository
         query = query.Where(u => u.IsAvailable);
 
         // Filtering between dates
-        var minDate = DateTime.Today.AddDays(-request.MaxDaysOld - 1);
-        var maxDate = DateTime.Today.AddDays(-request.MinDaysOld);
+        var minDate = DateTime.Today.AddDays(-request.MaxDaysOld - 1).ToUniversalTime();
+        var maxDate = DateTime.Today.AddDays(-request.MinDaysOld).ToUniversalTime();
         query = query.Where(u => u.ReleaseDate >= minDate && u.ReleaseDate <= maxDate);
 
         // Search term
@@ -87,7 +87,7 @@ public class ProductRepository : IProductRepository
             Name = x.Name,
             Price= x.Price,
             Image= x.Image,
-            ReleaseDate = x.ReleaseDate
+            ReleaseDate = x.ReleaseDate.ToUniversalTime()
         }).ToListAsync();
 
 

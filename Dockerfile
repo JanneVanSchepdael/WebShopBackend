@@ -1,30 +1,32 @@
-# Use the appropriate .NET SDK version as the base image
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
-
-# Set the working directory inside the container
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
+EXPOSE 5000
+EXPOSE 80
 
-# Copy the .csproj files and restore any dependencies (via dotnet restore)
-COPY *.sln .
-COPY WebShopAPI/API.csproj WebShopAPI/
-COPY Domain/Domain.csproj Domain/
-COPY Repositories/Repositories.csproj Repositories/
-COPY Persistence/Persistence.csproj Persistence/
-COPY Shared/Shared.csproj Shared/
+ENV DOTNET_URLS=http://+:5000
+
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+
+COPY ["WebShopAPI.sln", "./"]
+COPY ["WebShopAPI/API.csproj", "WebShopAPI/"]
+COPY ["Domain/Domain.csproj", "Domain/"]
+COPY ["Repositories/Repositories.csproj", "Repositories/"]
+COPY ["Persistence/Persistence.csproj", "Persistence/"]
+COPY ["Shared/Shared.csproj", "Shared/"]
 RUN dotnet restore
 
 # Copy the main source project files
-COPY . ./
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "WebShopAPI/API.csproj" -c Release -o /app/build
 
-# Publish the API project
-WORKDIR /app/WebShopAPI
-RUN dotnet publish -c Release -o out
+FROM build AS publish
+RUN dotnet publish "WebShopAPI/API.csproj" -c Release -o /app/publish
 
-# Build the runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
 
+FROM base AS final
 WORKDIR /app
-COPY --from=build-env /app/WebShopAPI/out .
+COPY --from=publish /app/publish .
 
-# Specify the entry point of your app. Adjust accordingly if your main project has a different output DLL name
 ENTRYPOINT ["dotnet", "API.dll"]

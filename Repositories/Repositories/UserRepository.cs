@@ -88,22 +88,18 @@ public class UserRepository : IUserRepository
     public async Task<UserResponse.Edit> EditAsync(UserRequest.Edit request)
     {
         UserResponse.Edit response = new();
-        AppUser user = await GetUserById(request.User.Id).SingleOrDefaultAsync();
+        AppUser user = await GetUserById(request.User.Id).SingleOrDefaultAsync() ?? throw new UserNotFoundException("User not found");
 
-        if (user != null)
+        _mapper.Map(request.User, user);
+
+        _context.Entry(user).State = EntityState.Modified;
+        response.User = new()
         {
-            _mapper.Map(request.User, user);
-
-            _context.Entry(user).State = EntityState.Modified;
-            response.User = new()
-            {
-                Id = user.Id,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName= user.LastName,
-            };
-
-        }
+            Id = user.Id,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName= user.LastName,
+        };
 
         return response;
     }

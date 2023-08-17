@@ -1,5 +1,6 @@
 using API.Extensions;
 using API.Helpers;
+using API.Middleware;
 using AutoMapper;
 using Domain;
 using FluentValidation.AspNetCore;
@@ -45,9 +46,6 @@ builder.Services.AddIdentityServices(builder.Configuration);
 
 // Add Repositories and automapper as services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<ICartRepository, CartRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
@@ -75,6 +73,9 @@ if (app.Environment.IsDevelopment())
         logger.LogError(ex, "An error occurred while seeding the database.");
     }
 }
+
+// Middleware
+app.UseMiddleware<ExceptionMiddleware>();
 
 //app.UseHttpsRedirection();
 app.UseRouting();

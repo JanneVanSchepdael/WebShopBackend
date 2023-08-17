@@ -20,7 +20,9 @@ public class CartController : BaseController
     [HttpPost]
     public async Task<CartResponse.Edit> Add([FromBody] CartRequest.Add request)
     {
-        return await _unitOfWork.CartRepository.AddToCartAsync(request);
+        var response = await _unitOfWork.CartRepository.AddToCartAsync(request);
+        await _unitOfWork.Complete();
+        return response;
     }
 
 
@@ -35,6 +37,8 @@ public class CartController : BaseController
     [HttpPut]
     public async Task<CartResponse.Edit> Edit([FromBody] CartRequest.Edit request)
     {
-        return await _unitOfWork.CartRepository.EditCartAsync(request);
+        var response = await _unitOfWork.CartRepository.EditCartAsync(request);
+        await _unitOfWork.Complete();
+        return response;
     }
 }

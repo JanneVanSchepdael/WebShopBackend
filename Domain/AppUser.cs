@@ -10,19 +10,13 @@ public class AppUser : IdentityUser
     public Cart Cart { get; set; }
     public ICollection<Order> Orders { get; set; }
 
-    public AppUser() { }
+    private AppUser() { Cart = new Cart(); }
 
-    public AppUser(string email, string firstName, string lastName)
+    public AppUser(string email, string firstName, string lastName) : this()
     {
         Email = email;
         UserName = email;
         FirstName = firstName; 
         LastName = lastName;
-        Cart = new();
-    }
-
-    public void AddOrder(Order order)
-    {
-        Orders.Add(order);
     }
 }

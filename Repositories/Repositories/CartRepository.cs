@@ -60,11 +60,7 @@ public class CartRepository : ICartRepository
             }
         }
 
-        await _context.SaveChangesAsync();
-
-        response.Cart = await GetCartByUserId(request.UserId)
-            .ProjectTo<CartDto.Edit>(_mapper.ConfigurationProvider)
-            .SingleOrDefaultAsync();
+        response.Cart = _mapper.Map<CartDto.Edit>(cart);
 
         return response;
 
@@ -110,7 +106,6 @@ public class CartRepository : ICartRepository
                 }
             }
 
-            await _context.SaveChangesAsync();
             response.Cart = _mapper.Map<CartDto.Edit>(cart);
         }
 

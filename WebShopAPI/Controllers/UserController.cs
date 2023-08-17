@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,82 +13,37 @@ using Shared.User;
 using Swashbuckle.AspNetCore.Annotations;
 
 
-namespace WebShopAPI.Controllers
+namespace WebShopAPI.Controllers;
+
+public class UserController : BaseController
 {
-    public class UserController : BaseController
+    private readonly IUnitOfWork _unitOfWork;
+
+    public UserController(IUnitOfWork unitOfWork)
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
-        private readonly ITokenRepository _tokenRepository;
-        private readonly IMapper _mapper;
+        _unitOfWork = unitOfWork;
+    }
 
-        public UserController(IUnitOfWork unitOfWork, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenRepository tokenRepository, IMapper mapper)
-        {
-            _unitOfWork = unitOfWork;
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _tokenRepository = tokenRepository;
-            _mapper = mapper;
-        }
+    [SwaggerOperation("Registers a new user.")]
+    [HttpPost("register")]
+    public async Task<UserResponse.Register> Register([FromBody] UserRequest.Register request)
+    {
+        return await _unitOfWork.UserRepository.RegisterAsync(request);
+    }
 
-        [SwaggerOperation("Registers a new user.")]
-        [HttpPost("register")]
-        public async Task<UserResponse.Register> Register([FromBody] UserRequest.Register request)
-        {
-            //if (await UserExists(request.Email)) return BadRequest("Username is taken");
+    [SwaggerOperation("Logs in a user.")]
+    [HttpPost("login")]
+    public async Task<UserResponse.Login> LoginAsync(UserRequest.Login request)
+    {
+       return await _unitOfWork.UserRepository.LoginAsync(request);
+    }
 
-            var user = _mapper.Map<AppUser>(request);
-            user.UserName = request.Email.ToLower();
-
-            var result = await _userManager.CreateAsync(user, request.Password);
-            //if(!result.Succeeded) return BadRequest(result.Errors);
-
-            return new UserResponse.Register
-            {
-                Id = user.Id.ToString(),
-                Email = user.Email,
-                Token = await _tokenRepository.CreateToken(
-                        new TokenRequest {Id = user.Id.ToString(), Email = user.Email}
-                    )
-            };
-        }
-
-        [SwaggerOperation("Logs in a user.")]
-        [HttpPost("login")]
-        public async Task<UserResponse.Login> LoginAsync(UserRequest.Login request)
-        {
-            var user = await _userManager.Users
-                    .SingleOrDefaultAsync(x => x.UserName == request.Email.ToLower());
-
-            //if (user == null) return Unauthorized("Invalid Username");
-
-            var result = await _signInManager
-                .CheckPasswordSignInAsync(user, request.Password, false);
-
-            //if (!result.Succeeded) return Unauthorized();
-
-            return new UserResponse.Login
-            {
-                Id = user.Id.ToString(),
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Token = await _tokenRepository.CreateToken(new TokenRequest { Id = user.Id.ToString(), Email = user.Email })
-            };
-        }
-
-        [SwaggerOperation("Edits an existing user.")]
-        [HttpPut]
-        public async Task<UserResponse.Edit> Edit([FromBody] UserRequest.Edit request)
-        {
-            return await _unitOfWork.UserRepository.EditAsync(request);
-        }
-
-        private async Task<bool> UserExists(string username)
-        {
-            return await _userManager.Users
-                .AnyAsync(x => x.UserName == username.ToLower());
-        }
+    [SwaggerOperation("Edits an existing user.")]
+    [HttpPut]
+    public async Task<UserResponse.Edit> Edit([FromBody] UserRequest.Edit request)
+    {
+        var response = await _unitOfWork.UserRepository.EditAsync(request);
+        await _unitOfWork.Complete();
+        return response;
     }
 }

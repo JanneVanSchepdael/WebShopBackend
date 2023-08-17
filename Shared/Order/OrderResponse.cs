@@ -1,4 +1,5 @@
-﻿using Shared.Product;
+﻿using Shared.Cart;
+using Shared.Product;
 
 namespace Shared.Order;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
 using Repositories;
 using Shared;
 using Shared.Cart;
@@ -20,7 +21,9 @@ namespace WebShopAPI.Controllers
         [HttpPost]
         public async Task<OrderResponse.Create> Create([FromBody] OrderRequest.Create request)
         {
-            return await _unitOfWork.OrderRepository.AddOrderAsync(request);
+            var response = await _unitOfWork.OrderRepository.AddOrderAsync(request);
+            await _unitOfWork.Complete();
+            return response;
         }
 
         [SwaggerOperation("Returns all orders of a specific user.")]

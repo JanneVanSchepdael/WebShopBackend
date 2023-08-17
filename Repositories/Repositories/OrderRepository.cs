@@ -12,12 +12,14 @@ public class OrderRepository : IOrderRepository
 {
     public readonly DataContext _context;
     public readonly DbSet<Order> _orders;
+    public readonly DbSet<Cart> _carts;
     public readonly IMapper _mapper;
 
     public OrderRepository(DataContext context, IMapper mapper)
     {
         _context = context;
         _orders = context.Orders;
+        _carts = context.Carts;
         _mapper = mapper;
     }
 
@@ -26,18 +28,14 @@ public class OrderRepository : IOrderRepository
        .OrderByDescending(m => m.OrderDate)
        .Where(o => o.User.Id == id).Include(a => a.Items);
 
-    private IQueryable<AppUser> GetUserById(string id) => _context.Users
-       .AsNoTracking()
-       .Where(a => a.Id == id);
-
     public async Task<OrderResponse.Index> GetOrdersByUserAsync(OrderRequest.Index request)
     {
-        OrderResponse.Index response = new();
-
-
-        response.Orders = await GetOrdersByUserId(request.UserId)
+        OrderResponse.Index response = new()
+        {
+            Orders = await GetOrdersByUserId(request.UserId)
                 .ProjectTo<OrderDto.Index>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+                .ToListAsync()
+        };
 
         return response;
     }
@@ -46,13 +44,16 @@ public class OrderRepository : IOrderRepository
     {
         OrderResponse.Create response = new();
 
-        AppUser user = await GetUserById(request.Order.UserId).SingleOrDefaultAsync();
-        var items = _mapper.Map<List<OrderItem>>(request.Order.Items);
+        AppUser user = await _context.Users.Include(u => u.Cart)
+                            .Where(u => u.Id == request.Order.UserId)
+                            .SingleOrDefaultAsync();
 
-        var order = new Order(user, items);
+        var order = _mapper.Map<Order>(request.Order);
+        order.UserId = user.Id;
 
         _orders.Add(order);
-        await _context.SaveChangesAsync();
+        _carts.Remove(user.Cart);
+        user.Cart = new Cart();
 
         response.Id = order.Id;
         return response;

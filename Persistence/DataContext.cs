@@ -27,9 +27,24 @@ namespace Persistence
                 .WithOne(y => y.Cart)
                 .HasForeignKey<Cart>(c => c.UserId);
 
+            builder.Entity<Cart>()
+                .HasMany(c => c.Items)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<Product>()
                 .Property(p => p.Price)
                 .HasColumnType("decimal(18,2)");
+
+            builder.Entity<Order>()
+                .HasOne(o => o.User)
+                .WithMany()
+                .HasForeignKey(o => o.UserId);
+
+            builder.Entity<AppUser>()
+                .HasOne(u => u.Cart)
+                .WithOne(c => c.User)
+                .HasForeignKey<Cart>(c => c.UserId);
         }
     }
 }

@@ -40,6 +40,6 @@ public class TokenRepository : ITokenRepository
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
-        return tokenHandler.WriteToken(token);
+        return await Task.FromResult(tokenHandler.WriteToken(token));
     }
 }

@@ -9,19 +9,8 @@ using System.Threading.Tasks;
 
 namespace Shared.User;
 
-// Static so there is never an object made of this class
-public static class UserResponse
+public abstract class UserResponse
 {
-    public class Index
-    {
-
-    }
-
-    public class Detail
-    {
-        public UserDto.Detail User { get; set; }
-    }
-
     public class Login
     {
         public string Id { get; set; }
@@ -44,10 +33,4 @@ public static class UserResponse
     {
         public UserDto.Edit User { get; set; }
     }
-
-    public class Delete
-    {
-
-    }
-
 }
